@@ -39,14 +39,21 @@
                         <td>{{ $w->status_keluarga?->klasifikasi ?? '-' }}</td>
                         <td>{{ $w->status }}</td>
                         <td>
+                            <!-- Tombol Detail -->
+                            <a href="{{ route('admin.warga.show', $w->id) }}" 
+                            class="btn btn-info btn-sm">
+                                Detail
+                            </a>
+                            <!-- Tombol Edit -->
                             <button class="btn btn-warning btn-sm"
                                     data-bs-toggle="modal"
                                     data-bs-target="#modalEdit{{ $w->id }}">
                                 Edit
                             </button>
+                            <!-- Hapus -->
                             <form action="{{ route('admin.warga.destroy', $w) }}" 
-                                  method="POST" class="d-inline" 
-                                  onsubmit="return confirm('Yakin hapus data ini?')">
+                                method="POST" class="d-inline" 
+                                onsubmit="return confirm('Yakin hapus data ini?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-danger btn-sm">Hapus</button>
                             </form>

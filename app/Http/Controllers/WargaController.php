@@ -89,6 +89,14 @@ class WargaController extends Controller
         return redirect()->route('admin.warga.index')->with('success', 'Data warga berhasil diperbarui.');
     }
 
+    public function show(Warga $warga)
+    {
+        // misal keluarganya berdasarkan status_keluarga_id
+        $keluarga = Warga::where('status_keluarga_id', $warga->status_keluarga_id)->get();
+
+        return view('admin.warga.show', compact('warga', 'keluarga'));
+    }
+
     /**
      * Remove the specified resource from storage.
      */

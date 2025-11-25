@@ -8,7 +8,7 @@
 									<div class="user-box">
 										<div class="u-img"><img src="{{ asset('tampilan/img/mbs.png') }}" alt="user"></div>
 										<div class="u-text">
-											<h4>Petugas RT</h4>
+											<h4>Petugas</h4>
 										</div>
 									</li>
 									<div class="dropdown-divider"></div>

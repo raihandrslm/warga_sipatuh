@@ -290,7 +290,11 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="empty-state">Belum ada pengajuan surat</td>
+                                    <td colspan="4" class="empty-state">
+                                        <div>📩</div>
+                                        <div class="fw-semibold">Belum ada data surat</div>
+                                        <small>Jika Anda membuat permohonan surat, maka akan tampil di sini.</small><br>
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>

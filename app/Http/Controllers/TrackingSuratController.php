@@ -12,26 +12,32 @@ class TrackingSuratController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tracking_surat = TrackingSurat::with(['surat.warga'])->latest()->get();
+        $query = TrackingSurat::with(['surat.warga'])->latest();
+
+        // FILTER STATUS (UNTUK ADMIN & RT)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $tracking_surat = $query->get();
         $surat = Surat::select('id','warga_id','jenis_surat')->get();
         $warga = Warga::all();
 
         if (auth()->user()->role === 'rt') {
-            return view('rt.tracking_surat.index', compact('tracking_surat', 'surat', 'warga'));
+            return view('rt.tracking_surat.index', compact(
+                'tracking_surat',
+                'surat',
+                'warga'
+            ));
         }
 
-        return view('admin.tracking_surat.index', compact('tracking_surat', 'surat', 'warga'));
-    }
-
-    public function create()
-    {
-        $warga = Warga::all();
-        return view(auth()->user()->role === 'rt' 
-            ? 'rt.tracking_surat.create' 
-            : 'admin.tracking_surat.create', compact('warga','surat')
-        );
+        return view('admin.tracking_surat.index', compact(
+            'tracking_surat',
+            'surat',
+            'warga'
+        ));
     }
     
     /**

@@ -398,7 +398,7 @@
                     <div class="login-icon">
                         <i class="fas fa-user-circle"></i>
                     </div>
-                    <h3>Login Admin Sipatuh</h3>
+                    <h3>Login Sipatuh</h3>
                     <p class="login-subtitle">Masuk ke akun Anda untuk mengakses layanan</p>
                 </div>
 

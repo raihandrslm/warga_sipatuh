@@ -12,9 +12,15 @@ class WargaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $warga = Warga::with('status_keluarga')->latest()->get();
+        $query = Warga::with('status_keluarga')->latest();
+
+        if ($request->filled('status_keluarga')) {
+            $query->where('status_keluarga_id', $request->status_keluarga);
+        }
+
+        $warga = $query->get();
         $status_keluarga = StatusKeluarga::all();
 
         return view('admin.warga.index', compact('warga', 'status_keluarga'));

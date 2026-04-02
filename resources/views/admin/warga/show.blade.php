@@ -163,12 +163,12 @@
 
     <div class="card shadow">
         <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Detail Keluarga : {{ $warga->nama }}</h4>
+            <h4 class="mb-0">Detail Warga</h4>
         </div>
 
         <div class="card-body">
 
-            <h5 class="fw-bold">Data Warga</h5>
+            <h5 class="fw-bold">Data {{ $warga->nama }} </h5>
             <p><strong>NIK : </strong> {{ $warga->nik }}</p>
             <p><strong>Nama : </strong> {{ $warga->nama }}</p>
             <p><strong>Alamat : </strong> {{ $warga->alamat }}</p>
@@ -177,7 +177,7 @@
 
             <hr>
 
-            <h5 class="fw-bold">Anggota Keluarga {{ $warga->nama }}</h5>
+            <h5 class="fw-bold">Detail : {{ $warga->nama }}</h5>
             <table class="table table-bordered mt-3">
                 <thead class="table-light">
                     <tr>

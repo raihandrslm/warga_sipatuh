@@ -5,11 +5,11 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Table Tracking Surat</h5>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
-                + Tambah Tracking
-            </button>
         </div>
+
         <div class="card-body">
+
+            {{-- ALERT --}}
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
@@ -17,6 +17,29 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
 
+            {{-- FILTER --}}
+            <form method="GET" action="{{ route('admin.tracking_surat.index') }}">
+                <div class="row g-2 align-items-end mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Status Surat</label>
+                        <select name="status" class="form-select">
+                            <option value="">Semua Status</option>
+                            <option value="diajukan" {{ request('status') == 'diajukan' ? 'selected' : '' }}>Diajukan</option>
+                            <option value="diproses" {{ request('status') == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                            <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                            <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 d-flex gap-2">
+                        <button class="btn btn-primary px-4 rounded-pill">Filter</button>
+                        <a href="{{ route('admin.tracking_surat.index') }}"
+                           class="btn btn-secondary px-4 rounded-pill">Reset</a>
+                    </div>
+                </div>
+            </form>
+
+            {{-- TABLE --}}
             <table class="table table-striped" id="table1">
                 <thead>
                     <tr>
@@ -34,6 +57,7 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $ts->surat?->warga?->nama ?? '-' }}</td>
                         <td>{{ $ts->surat?->jenis_surat ?? '-' }}</td>
+
                         <td>
                             @if ($ts->status === 'diajukan')
                                 <span class="badge bg-secondary">Diajukan</span>
@@ -45,15 +69,18 @@
                                 <span class="badge bg-success">Selesai</span>
                             @endif
                         </td>
+
                         <td>{{ \Carbon\Carbon::parse($ts->tanggal_update)->format('d-m-Y H:i') }}</td>
+
                         <td>
                             <button class="btn btn-warning btn-sm"
                                     data-bs-toggle="modal"
                                     data-bs-target="#modalEdit{{ $ts->id }}">
                                 Edit
                             </button>
-                            <form action="{{ route('admin.tracking_surat.destroy', $ts) }}" 
-                                  method="POST" class="d-inline" 
+
+                            <form action="{{ route('admin.tracking_surat.destroy', $ts) }}"
+                                  method="POST" class="d-inline"
                                   onsubmit="return confirm('Yakin hapus tracking ini?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-danger btn-sm">Hapus</button>
@@ -61,107 +88,67 @@
                         </td>
                     </tr>
 
-                    <!-- Modal Edit -->
-                    <div class="modal fade" id="modalEdit{{ $ts->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <form action="{{ route('admin.tracking_surat.update', $ts) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
+                    {{-- MODAL EDIT --}}
+                    <div class="modal fade" id="modalEdit{{ $ts->id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="{{ route('admin.tracking_surat.update', $ts) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+
+                                <!-- WAJIB ADA -->
+                                <input type="hidden" name="surat_id" value="{{ $ts->surat_id }}">
+
+                                <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title">Edit Tracking</h5>
+                                        <h5 class="modal-title">Edit Status Surat</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
+
                                     <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label>Surat</label>
-                                            <select class="form-select" name="surat_id" required>
-                                                <option disabled>Pilih Surat</option>
-                                                @foreach ($surat as $s)
-                                                    <option value="{{ $s->id }}" {{ $ts->surat_id == $s->id ? 'selected' : '' }}>
-                                                        {{ $s->warga?->nama }} - {{ $s->jenis_surat }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+
                                         <div class="mb-3">
                                             <label>Status</label>
-                                            <select class="form-select" name="status" required>
+                                            <select name="status" class="form-select">
                                                 <option value="diajukan" {{ $ts->status == 'diajukan' ? 'selected' : '' }}>Diajukan</option>
                                                 <option value="diproses" {{ $ts->status == 'diproses' ? 'selected' : '' }}>Diproses</option>
                                                 <option value="ditolak" {{ $ts->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                                                 <option value="selesai" {{ $ts->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
                                             </select>
                                         </div>
+
                                         <div class="mb-3">
                                             <label>Tanggal Update</label>
-                                            <input type="datetime-local" name="tanggal_update" class="form-control" 
-                                                   value="{{ \Carbon\Carbon::parse($ts->tanggal_update)->format('Y-m-d\TH:i') }}" required>
+                                            <input type="datetime-local" name="tanggal_update"
+                                                value="{{ \Carbon\Carbon::parse($ts->tanggal_update)->format('Y-m-d\TH:i') }}"
+                                                class="form-control">
                                         </div>
+
                                     </div>
+
                                     <div class="modal-footer">
                                         <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                        <button class="btn btn-primary">Update</button>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
+
                     @endforeach
                 </tbody>
             </table>
+
         </div>
     </div>
 </section>
-
-<!-- Modal Tambah -->
-<div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form action="{{ route('admin.tracking_surat.store') }}" method="POST">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Tracking</h5>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label>Surat</label>
-                        <select class="form-select" name="surat_id" required>
-                            <option selected disabled>Pilih Surat</option>
-                            @foreach ($surat as $s)
-                                <option value="{{ $s->id }}">
-                                    {{ $s->warga?->nama }} - {{ $s->jenis_surat }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label>Status</label>
-                        <select class="form-select" name="status" required>
-                            <option value="diajukan">Diajukan</option>
-                            <option value="diproses">Diproses</option>
-                            <option value="ditolak">Ditolak</option>
-                            <option value="selesai">Selesai</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label>Tanggal Update</label>
-                        <input type="datetime-local" name="tanggal_update" class="form-control" value="{{ now()->format('Y-m-d\TH:i') }}" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        new simpleDatatables.DataTable(document.querySelector('#table1'));
-    });
+document.addEventListener('DOMContentLoaded', function () {
+    new simpleDatatables.DataTable(document.querySelector('#table1'));
+});
 </script>
 @endpush

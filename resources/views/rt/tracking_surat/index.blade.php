@@ -5,9 +5,6 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Table Tracking Surat</h5>
-            <button class="btn btn-primary" data-toggle="modal" data-target="#modalTambah">
-                + Tambah Tracking
-            </button>
         </div>
         <div class="card-body">
             @if (session('success'))
@@ -16,6 +13,30 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
+
+            <form method="GET" action="">
+                <div class="row g-2 align-items-end mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Filter Status</label>
+                        <select name="status" class="form-select">
+                            <option value="">Semua Status</option>
+                            <option value="diajukan" {{ request('status') == 'diajukan' ? 'selected' : '' }}>Diajukan</option>
+                            <option value="diproses" {{ request('status') == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                            <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                            <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            Filter
+                        </button>
+                        <a href="{{ route('rt.tracking_surat.index') }}" class="btn btn-secondary">
+                            Reset
+                        </a>
+                    </div>
+                </div>
+            </form>
 
             <table class="table table-striped" id="table1">
                 <thead>

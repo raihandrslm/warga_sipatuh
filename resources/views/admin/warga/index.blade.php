@@ -6,9 +6,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Table Warga</h5>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
-             + Tambah Data
+                + Tambah Data
             </button>
         </div>
+
         <div class="card-body">
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
@@ -17,6 +18,37 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
 
+            {{-- FILTER --}}
+            <form method="GET" action="{{ route('admin.warga.index') }}">
+                <div class="row mb-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label">Status Keluarga</label>
+                        <select name="status_keluarga" class="form-select">
+                            <option value="">Semua</option>
+                            @foreach ($status_keluarga as $sk)
+                                <option value="{{ $sk->id }}"
+                                    {{ request('status_keluarga') == $sk->id ? 'selected' : '' }}>
+                                    {{ $sk->klasifikasi }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            Filter
+                        </button>
+                    </div>
+
+                    <div class="col-md-2">
+                        <a href="{{ route('admin.warga.index') }}" class="btn btn-secondary w-100">
+                            Reset
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+            {{-- TABLE --}}
             <table class="table table-striped" id="table1">
                 <thead>
                     <tr>
@@ -39,28 +71,28 @@
                         <td>{{ $w->status_keluarga?->klasifikasi ?? '-' }}</td>
                         <td>{{ $w->status }}</td>
                         <td>
-                            <!-- Tombol Detail -->
-                            <a href="{{ route('admin.warga.show', $w->id) }}" 
-                            class="btn btn-info btn-sm">
+                            <a href="{{ route('admin.warga.show', $w->id) }}" class="btn btn-info btn-sm">
                                 Detail
                             </a>
-                            <!-- Tombol Edit -->
+
                             <button class="btn btn-warning btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalEdit{{ $w->id }}">
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEdit{{ $w->id }}">
                                 Edit
                             </button>
-                            <!-- Hapus -->
-                            <form action="{{ route('admin.warga.destroy', $w) }}" 
-                                method="POST" class="d-inline" 
+
+                            <form action="{{ route('admin.warga.destroy', $w) }}"
+                                method="POST"
+                                class="d-inline"
                                 onsubmit="return confirm('Yakin hapus data ini?')">
-                                @csrf @method('DELETE')
+                                @csrf
+                                @method('DELETE')
                                 <button class="btn btn-danger btn-sm">Hapus</button>
                             </form>
                         </td>
                     </tr>
 
-                    <!-- Modal Edit -->
+                    {{-- MODAL EDIT --}}
                     <div class="modal fade" id="modalEdit{{ $w->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
@@ -86,9 +118,9 @@
                                         <div class="mb-3">
                                             <label>Status Keluarga</label>
                                             <select class="form-select" name="status_keluarga_id" required>
-                                                <option disabled>Pilih Status Keluarga</option>
                                                 @foreach ($status_keluarga as $sk)
-                                                    <option value="{{ $sk->id }}" {{ $w->status_keluarga_id == $sk->id ? 'selected' : '' }}>
+                                                    <option value="{{ $sk->id }}"
+                                                        {{ $w->status_keluarga_id == $sk->id ? 'selected' : '' }}>
                                                         {{ $sk->klasifikasi }}
                                                     </option>
                                                 @endforeach
@@ -97,19 +129,17 @@
                                         <div class="mb-3">
                                             <label>Status</label>
                                             <select class="form-select" name="status" required>
-                                                <option disabled>Pilih Status</option>
-                                                <option value="Sudah Menikah" {{ $w->status == 'Sudah Menikah' ? 'selected' : '' }}>Sudah Menikah</option>
-                                                <option value="Belum Menikah" {{ $w->status == 'Belum Menikah' ? 'selected' : '' }}>Belum Menikah</option>
-                                                <option value="Cerai" {{ $w->status == 'Cerai' ? 'selected' : '' }}>Cerai</option>
-                                                <option value="Duda" {{ $w->status == 'Duda' ? 'selected' : '' }}>Duda</option>
-                                                <option value="Janda" {{ $w->status == 'Janda' ? 'selected' : '' }}>Janda</option>
-                                                <option value="Pelajar" {{ $w->status == 'Pelajar' ? 'selected' : '' }}>Pelajar</option>
+                                                @foreach (['Sudah Menikah','Belum Menikah','Cerai','Duda','Janda','Pelajar'] as $st)
+                                                    <option value="{{ $st }}" {{ $w->status == $st ? 'selected' : '' }}>
+                                                        {{ $st }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                        <button class="btn btn-primary">Simpan</button>
                                     </div>
                                 </form>
                             </div>
@@ -122,7 +152,7 @@
     </div>
 </section>
 
-<!-- Modal Tambah -->
+{{-- MODAL TAMBAH --}}
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -147,7 +177,6 @@
                     <div class="mb-3">
                         <label>Status Keluarga</label>
                         <select class="form-select" name="status_keluarga_id" required>
-                            <option selected disabled>Pilih Status Keluarga</option>
                             @foreach ($status_keluarga as $sk)
                                 <option value="{{ $sk->id }}">{{ $sk->klasifikasi }}</option>
                             @endforeach
@@ -156,19 +185,15 @@
                     <div class="mb-3">
                         <label>Status</label>
                         <select class="form-select" name="status" required>
-                            <option selected disabled>Pilih Status</option>
-                            <option value="Sudah Menikah">Sudah Menikah</option>
-                            <option value="Belum Menikah">Belum Menikah</option>
-                            <option value="Cerai">Cerai</option>
-                            <option value="Duda">Duda</option>
-                            <option value="Janda">Janda</option>
-                            <option value="Pelajar">Pelajar</option>
+                            @foreach (['Sudah Menikah','Belum Menikah','Cerai','Duda','Janda','Pelajar'] as $st)
+                                <option value="{{ $st }}">{{ $st }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
@@ -178,8 +203,8 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        new simpleDatatables.DataTable(document.querySelector('#table1'));
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    new simpleDatatables.DataTable("#table1");
+});
 </script>
 @endpush

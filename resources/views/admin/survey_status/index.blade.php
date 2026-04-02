@@ -1,6 +1,17 @@
 @extends('layouts.admin')
 
 @section('content')
+
+{{-- CSS UNTUK FOTO KOTAK --}}
+<style>
+    .foto-kotak {
+        width: 1500px;          /* ubah ukuran di sini */
+        height: 1500px;         /* ubah ukuran di sini */
+        object-fit: cover;    /* menjaga proporsi gambar */
+        border-radius: 6px;   /* opsional, bisa dihapus */
+    }
+</style>
+
 <section class="section">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -41,7 +52,9 @@
                         <td>{{ $s->pekerjaan }}</td>
                         <td>
                             @if ($s->kondisi_rumah)
-                                <img src="{{ asset('storage/' . $s->kondisi_rumah) }}" width="60" class="img-thumbnail">
+                               <a href="{{ asset('storage/' . $s->kondisi_rumah) }}" target="_blank">
+                                <img src="{{ asset('storage/' . $s->kondisi_rumah) }}" class="foto-kotak img-thumbnail">
+                              </a>
                             @else
                                 <span class="text-muted">-</span>
                             @endif
@@ -50,7 +63,9 @@
                         <td>{{ $s->kwh_listrik }}</td>
                         <td>
                             @if ($s->foto)
-                                <img src="{{ asset('storage/' . $s->foto) }}" width="60" class="img-thumbnail">
+                                <a href="{{ asset('storage/' . $s->foto) }}" target="_blank">
+                                    <img src="{{ asset('storage/' . $s->foto) }}" class="foto-kotak img-thumbnail">
+                                </a>
                             @else
                                 <span class="text-muted">-</span>
                             @endif
@@ -106,10 +121,10 @@
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <label>Foto Kondisi Rumah</label>
-                                                <input type="file" name="kondisi_rumah" class="form-control" required>
+                                                <input type="file" name="kondisi_rumah" class="form-control">
                                                 @if ($s->kondisi_rumah)
                                                     <small class="d-block mt-1">Foto saat ini:</small>
-                                                    <img src="{{ asset('storage/' . $s->kondisi_rumah) }}" width="100" class="img-thumbnail mt-2">
+                                                    <img src="{{ asset('storage/' . $s->kondisi_rumah) }}" class="foto-kotak img-thumbnail mt-2">
                                                 @endif
                                             </div>
                                             <div class="col-md-6 mb-3">
@@ -125,7 +140,7 @@
                                                 <input type="file" name="foto" class="form-control">
                                                 @if ($s->foto)
                                                     <small class="d-block mt-1">Foto saat ini:</small>
-                                                    <img src="{{ asset('storage/' . $s->foto) }}" width="100" class="img-thumbnail mt-2">
+                                                    <img src="{{ asset('storage/' . $s->foto) }}" class="foto-kotak img-thumbnail mt-2">
                                                 @endif
                                             </div>
                                         </div>

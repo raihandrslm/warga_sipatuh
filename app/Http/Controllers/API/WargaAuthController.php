@@ -1,16 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Warga;
 
-class WargaLoginController extends Controller
+class WargaAuthController extends Controller
 {
-    // Hapus showLoginForm kalau tidak dipakai di API
-    // public function showLoginForm() { ... }
-
     public function login(Request $request)
     {
         $request->validate([
@@ -19,8 +16,8 @@ class WargaLoginController extends Controller
         ]);
 
         $warga = Warga::where('nik', $request->nik)
-                    ->where('nama', $request->nama)
-                    ->first();
+                      ->where('nama', $request->nama)
+                      ->first();
 
         if (!$warga) {
             return response()->json([
@@ -28,8 +25,8 @@ class WargaLoginController extends Controller
             ], 401);
         }
 
-        // Buat Sanctum Token
-        $token = $warga->createToken('warga-login-token')->plainTextToken;
+        // Buat token Sanctum
+        $token = $warga->createToken('warga-app-token')->plainTextToken;
 
         return response()->json([
             'success'    => true,
@@ -42,11 +39,11 @@ class WargaLoginController extends Controller
 
     public function logout(Request $request)
     {
-        // Hapus token yang sedang dipakai
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
+            'success' => true,
             'message' => 'Logout berhasil'
-        ]);
+        ], 200);
     }
 }
